@@ -9,7 +9,6 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.Hitsplat;
@@ -26,13 +25,15 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 @PluginDescriptor(
 	name = "Damage Taken"
 )
 public class DamageTakenPlugin extends Plugin
 {
+	private static final Logger log = LoggerFactory.getLogger(DamageTakenPlugin.class);
 	private static final int ANIMATION_WINDOW_TICKS = 3;
 	private static final int PROJECTILE_IMPACT_WINDOW_CYCLES = 2;
 
@@ -152,7 +153,7 @@ public class DamageTakenPlugin extends Plugin
 		}
 		else
 		{
-			tracker.addDamage(null, hitsplat.getAmount());
+			tracker.addDamage("Unknown", hitsplat.getAmount());
 			log.debug("Could not attribute {} incoming damage to an NPC", hitsplat.getAmount());
 		}
 	}

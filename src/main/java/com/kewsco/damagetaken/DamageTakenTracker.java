@@ -19,7 +19,12 @@ public final class DamageTakenTracker
 			return;
 		}
 
-		String normalized = source == null || source.trim().isEmpty() ? "Unknown" : source.trim();
+		if (source == null || source.trim().isEmpty())
+		{
+			return;
+		}
+
+		String normalized = source.trim();
 		String key = normalized.toLowerCase(Locale.ROOT);
 		DamageTakenEntry entry = entries.get(key);
 		if (entry == null)

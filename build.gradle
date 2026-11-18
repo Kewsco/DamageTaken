@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'application'
 }
 
 repositories {
@@ -17,27 +16,23 @@ repositories {
 def runeLiteVersion = 'latest.release'
 
 dependencies {
-    implementation group: 'net.runelite', name: 'client', version: runeLiteVersion
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-
+    compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
     testImplementation 'junit:junit:4.13.2'
+    testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+    testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
 }
 
 group = 'com.kewsco'
-version = '1.0.0'
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release.set(11)
 }
 
-application {
-    mainClass = 'net.runelite.client.RuneLite'
-}
-
-tasks.named('run') {
+tasks.register('run', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.kewsco.damagetaken.DamageTakenDevClient'
     jvmArgs '-ea'
-    args '--developer-mode'
+    args '--developer-mode', '--debug'
     standardInput = System.in
 }
