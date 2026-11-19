@@ -21,6 +21,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.ProjectileMoved;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -39,6 +40,9 @@ public class DamageTakenPlugin extends Plugin
 
 	@Inject
 	private Client client;
+
+	@Inject
+	private ConfigManager configManager;
 
 	@Inject
 	private OverlayManager overlayManager;
@@ -115,6 +119,24 @@ public class DamageTakenPlugin extends Plugin
 				lastAnimationTicks.put(npc, gameTick);
 				lastAnimationSequences.put(npc, ++animationSequence);
 			}
+		}
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (!DamageTakenConfig.GROUP.equals(event.getGroup())
+			|| !"resetDamageTotals".equals(event.getKey()))
+		{
+			return;
+		}
+
+		String resetValue = configManager.getConfiguration(
+			DamageTakenConfig.GROUP, "resetDamageTotals");
+		if (Boolean.parseBoolean(resetValue))
+		{
+			tracker.reset();
+			configManager.setConfiguration(DamageTakenConfig.GROUP, "resetDamageTotals", false);
 		}
 	}
 
@@ -305,16 +327,22 @@ public class DamageTakenPlugin extends Plugin
 
 		NPC best = attackers.get(0);
 		if (attackers.size() > 1 && !isUnambiguousMeleeSelection(
-			animationAge(best), animationAge(attackers.get(1)), sameNpcSourceName(attackers)))
+			animationAge(best), animationAge(attackers.get(1)),
+			animationSequence(best), animationSequence(attackers.get(1)),
+			sameNpcSourceName(attackers)))
 		{
 			return null;
 		}
 		return best;
 	}
 
-	static boolean isUnambiguousMeleeSelection(int bestAge, int nextBestAge, boolean sameSourceName)
+	static boolean isUnambiguousMeleeSelection(
+		int bestAge, int nextBestAge, long bestSequence, long nextBestSequence,
+		boolean sameSourceName)
 	{
-		return sameSourceName || bestAge < nextBestAge;
+		return sameSourceName
+			|| bestAge < nextBestAge
+			|| (bestAge == nextBestAge && bestSequence > nextBestSequence);
 	}
 
 	private boolean sameProjectileSourceName(List<Map.Entry<Projectile, PendingProjectile>> candidates)

@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.util.List;
 import javax.inject.Inject;
 import net.runelite.api.MenuAction;
+import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -17,9 +18,6 @@ import net.runelite.client.ui.overlay.components.PanelComponent;
 
 public class DamageTakenOverlay extends Overlay
 {
-	private static final Color TITLE = new Color(255, 193, 82);
-	private static final Color TEXT = new Color(238, 220, 180);
-
 	private final DamageTakenPlugin plugin;
 	private final DamageTakenConfig config;
 	private final PanelComponent panel = new PanelComponent();
@@ -41,24 +39,27 @@ public class DamageTakenOverlay extends Overlay
 		List<DamageTakenEntry> entries = plugin.getTracker().getEntries();
 		panel.getChildren().clear();
 		int opacity = (int) Math.round(config.overlayOpacity() * 255 / 100.0);
-		panel.setBackgroundColor(new Color(46, 32, 21, opacity));
-		panel.setBorder(new Rectangle(6, 6, 6, 6));
-		panel.setPreferredSize(new Dimension(190, 0));
+		Color text = withOpacity(ColorScheme.LIGHT_GRAY_COLOR, opacity);
+		Color white = withOpacity(Color.WHITE, opacity);
+		panel.setBackgroundColor(withOpacity(new Color(62, 53, 41), opacity));
+		panel.setBorder(new Rectangle(4, 4, 4, 4));
+		panel.setPreferredSize(new Dimension(config.overlayWidth(), 0));
 		if (!config.hideHeader())
 		{
 			panel.getChildren().add(LineComponent.builder()
 				.left("Damage Taken")
-				.leftColor(TITLE)
+				.leftColor(white)
 				.right(" ")
 				.build());
-			panel.getChildren().add(new SeparatorComponent(new Color(177, 127, 65, opacity), 6));
+			panel.getChildren().add(new SeparatorComponent(
+				white, 4));
 		}
 
 		if (entries.isEmpty())
 		{
 			panel.getChildren().add(LineComponent.builder()
 				.left("No damage recorded")
-				.leftColor(TEXT)
+				.leftColor(text)
 				.build());
 		}
 		else
@@ -69,23 +70,29 @@ public class DamageTakenOverlay extends Overlay
 				DamageTakenEntry entry = entries.get(i);
 				if (i > 0)
 				{
-					panel.getChildren().add(new SeparatorComponent(new Color(111, 77, 42,
-						(int) Math.round(120 * opacity / 255.0)), 5));
+					panel.getChildren().add(new SeparatorComponent(
+						new Color(255, 255, 255, (int) Math.round(120 * opacity / 255.0)), 4));
 				}
 
 				panel.getChildren().add(LineComponent.builder()
 					.left(entry.getSource())
-					.leftColor(TEXT)
+					.leftColor(white)
 					.right(Integer.toString(entry.getDamage()))
-					.rightColor(TITLE)
+					.rightColor(text)
 					.build());
 			}
 		}
 
 		Dimension size = panel.render(graphics);
-		graphics.setColor(new Color(157, 111, 56, opacity));
+		int borderOpacity = (int) Math.round(180 * opacity / 255.0);
+		graphics.setColor(new Color(48, 41, 32, borderOpacity));
 		graphics.drawRect(0, 0, size.width - 1, size.height - 1);
 		return size;
+	}
+
+	private static Color withOpacity(Color color, int opacity)
+	{
+		return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
 	}
 
 	private static final class SeparatorComponent implements LayoutableRenderableEntity

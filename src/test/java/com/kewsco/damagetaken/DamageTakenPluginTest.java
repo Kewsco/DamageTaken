@@ -20,8 +20,9 @@ public class DamageTakenPluginTest
 	@Test
 	public void acceptsOnlyTheMostRecentMeleeAnimationWhenSourcesDiffer()
 	{
-		assertEquals(true, DamageTakenPlugin.isUnambiguousMeleeSelection(0, 1, false));
-		assertEquals(false, DamageTakenPlugin.isUnambiguousMeleeSelection(1, 1, false));
-		assertEquals(true, DamageTakenPlugin.isUnambiguousMeleeSelection(1, 1, true));
+		assertEquals(true, DamageTakenPlugin.isUnambiguousMeleeSelection(0, 1, 2, 1, false));
+		assertEquals(false, DamageTakenPlugin.isUnambiguousMeleeSelection(1, 1, 1, 2, false));
+		assertEquals(true, DamageTakenPlugin.isUnambiguousMeleeSelection(1, 1, 2, 1, false));
+		assertEquals(true, DamageTakenPlugin.isUnambiguousMeleeSelection(1, 1, 1, 2, true));
 	}
 }

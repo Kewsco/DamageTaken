@@ -7,8 +7,8 @@ Damage Taken is a RuneLite plugin that tracks incoming damage and attributes it 
 - Displays incoming damage totals in an overlay.
 - Attributes projectile and melee hits to NPC names when possible.
 - Preserves ambiguous hits as `Unknown` instead of guessing.
-- Configures visible rows, overlay opacity, and header visibility.
-- Clears recorded data from the overlay context menu.
+- Configures visible rows, overlay opacity, width, and header visibility.
+- Clears recorded data from the overlay context menu or the configuration panel.
 
 ## Development
 
