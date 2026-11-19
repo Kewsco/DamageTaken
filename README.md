@@ -3,7 +3,7 @@
 Damage Taken is a RuneLite plugin that tracks incoming damage and attributes it to NPC sources when the client provides enough evidence.
 
 ![alt text][logo]
-[logo]: https://github.com/Kewsco/DamageTaken/res/DamageTakenScreenshot.png "Damage taken overlay."
+[logo]: res/DamageTakenScreenshot.png "Damage taken overlay."
 
 ## Features
 
